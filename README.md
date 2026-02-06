@@ -1,16 +1,3 @@
-## 📑 Índice
-
-- [📖 Descripción general del proyecto](#-descripción-general-del-proyecto)
-- [⚙️ Instrucciones de configuración](#️-instrucciones-de-configuración)
-  - [📋 Requisitos previos](#-requisitos-previos)
-  - [📦 Instalación local](#-instalación-local)
-- [📚 Documentación de la API](#-documentación-de-la-api)
-  - [🔹 Crear un mensaje](#-crear-un-mensaje)
-  - [🔹 Obtener mensajes por sesión](#-obtener-mensajes-por-sesión)
-  - [❌ Ejemplo de error](#-ejemplo-de-error)
-- [🧪 Instrucciones para pruebas](#-instrucciones-para-pruebas)
-- [✅ Notas finales](#-notas-finales)
-
 #  API Para Nequi
 
 ## Descripción General del Proyecto
@@ -116,7 +103,7 @@ Las pruebas cubren:
 - Validaciones de datos
 - Procesamiento de mensajes
 - Manejo de errores
-- 
+  
 El objetivo es mantener una cobertura mínima del 80%, conforme a los requisitos de la prueba técnica.
 
 Notas finales:
