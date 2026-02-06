@@ -89,51 +89,49 @@ api/
 
 ### Paso 1: Clonar el Repositorio
 
-# Clonar desde GitHub
 git clone https://github.com/jairocalde/API
 cd API
 
 ### Paso 2: Configurar Entorno Virtual
-# Crear entorno virtual
+Crear entorno virtual
 python -m venv venv
 
-# Activar entorno virtual
-# En Windows (PowerShell):
+Activar entorno virtual
+En Windows (PowerShell):
 .\venv\Scripts\Activate.ps1
-# Si hay error de permisos, ejecutar como administrador:
+Si hay error de permisos, ejecutar como administrador:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# En Windows (CMD):
+En Windows (CMD):
 venv\Scripts\activate.bat
 
-# Verificar que está activado (deberías ver (venv) al principio)
+Verificar que está activado (deberías ver (venv) al principio)
 (venv) $
 
 ### Paso 3: Instalar Dependencias
-# Instalar desde requirements.txt
+Instalar desde requirements.txt
 pip install -r requirements.txt
 
-# Verificar instalación
+Verificar instalación
 pip list | findstr fastapi  # Windows
 
 ### Paso 4: Configurar Variables de Entorno
 
-# Copiar archivo de ejemplo
+Copiar archivo de ejemplo
 copy .env.example .env  # Windows
 
-# Los valores por defecto funcionarán para desarrollo
+Los valores por defecto funcionarán para desarrollo
 
 ## Ejecución de la Aplicación
 
-# Desde la raíz del proyecto
+Desde la raíz del proyecto
 uvicorn src.main:app --reload
 
-# Verificar que la aplicación está corriendo
-
-# o en PowerShell:
+Verificar que la aplicación está corriendo
+o en PowerShell:
 Invoke-RestMethod -Uri "http://localhost:8000/"
 
-# Salida esperada:
+Salida esperada:
 
 {
   "message": "Chat Message Processing API",
