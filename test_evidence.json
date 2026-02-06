@@ -1,0 +1,16 @@
+{
+  "test_message": {
+    "message_id": "msg-123456",
+    "session_id": "session-abcdef",
+    "content": "Hola, \u00bfc\u00f3mo puedo ayudarte hoy?",
+    "timestamp": "2023-06-15T14:30:00Z",
+    "sender": "system"
+  },
+  "test_date": "2024-01-15",
+  "api_url": "http://localhost:8000",
+  "results": {
+    "post_status": 400,
+    "get_success": true,
+    "docs_available": true
+  }
+}
