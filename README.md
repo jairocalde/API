@@ -2,26 +2,25 @@
 #  API Para Nequi
 
 ## Descripción General del Proyecto
+Es una API RESTful desarrollada en Python con FastAPI como parte de la prueba técnica para backend. La API permite procesar, validar, almacenar y recuperar mensajes de chat con un enfoque en arquitectura limpia y buenas prácticas de desarrollo.
 
-**API Para Nequi** es una API RESTful desarrollada en Python con FastAPI como parte de la prueba técnica para backend. La API permite procesar, validar, almacenar y recuperar mensajes de chat con un enfoque en arquitectura limpia y buenas prácticas de desarrollo.
+### Objetivos Cumplidos
+-  Diseñar e implementar una API limpia y mantenible
+-  Trabajar con Python y frameworks backend comunes (FastAPI, SQLAlchemy)
+-  Implementar manejo de errores y validación adecuados
+-  Escribir pruebas unitarias con cobertura > 80%
+-  Documentar código y API de forma completa
 
-### 🎯 Objetivos Cumplidos
--  **Diseñar e implementar una API limpia y mantenible**
--  **Trabajar con Python y frameworks backend comunes** (FastAPI, SQLAlchemy)
--  **Implementar manejo de errores y validación adecuados**
--  **Escribir pruebas unitarias con cobertura > 80%**
--  **Documentar código y API de forma completa**
+### Características Principales
+- Validación robusta de mensajes con Pydantic
+- Procesamiento pipeline (conteo palabras/caracteres, filtrado contenido)
+- Base de datos SQLite con SQLAlchemy ORM
+- Arquitectura limpia (separación de responsabilidades)
+- Documentación automática Swagger UI y ReDoc
+- Manejo de errores con respuestas HTTP apropiadas
+- Paginación y filtrado en consultas de mensajes
 
-### ✨ Características Principales
-- **Validación robusta** de mensajes con Pydantic
-- **Procesamiento pipeline** (conteo palabras/caracteres, filtrado contenido)
-- **Base de datos SQLite** con SQLAlchemy ORM
-- **Arquitectura limpia** (separación de responsabilidades)
-- **Documentación automática** Swagger UI y ReDoc
-- **Manejo de errores** con respuestas HTTP apropiadas
-- **Paginación y filtrado** en consultas de mensajes
-
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 | Tecnología | Versión | Propósito |
 |------------|---------|-----------|
@@ -36,41 +35,50 @@
 ## Estructura del Proyecto
 
 api/
-├── src/ # Código fuente principal
-│ ├── api/ # Capa de presentación (endpoints)
-│ │ ├── endpoints/
-│ │ │ ├── messages.py # Endpoints de mensajes
-│ │ │ └── health.py # Endpoints de monitoreo
-│ │ └── init.py
-│ ├── core/ # Configuración y utilidades
-│ │ ├── config.py # Configuración de la aplicación
-│ │ └── init.py
-│ ├── database/ # Capa de datos
-│ │ ├── database.py # Configuración de DB y sesiones
-│ │ ├── models.py # Modelos SQLAlchemy
-│ │ └── init.py
-│ ├── domain/ # Modelos de dominio
-│ │ ├── schemas.py # Esquemas Pydantic (DTOs)
-│ │ └── init.py
-│ ├── repositories/ # Patrón repositorio
-│ │ ├── message_repository.py # Operaciones CRUD
-│ │ └── init.py
-│ ├── services/ # Lógica de negocio
-│ │ ├── message_service.py # Servicio principal
-│ │ ├── validation_service.py # Validación de mensajes
-│ │ ├── processing_pipeline.py # Procesamiento de contenido
-│ │ └── init.py
-│ └── main.py # Aplicación principal FastAPI
-├── tests/ # Pruebas unitarias e integración
-│ ├── test_api.py # Pruebas de endpoints
-│ ├── test_services.py # Pruebas de servicios
-│ └── init.py
-├── requirements.txt # Dependencias del proyecto
-├── Dockerfile # Configuración Docker
-├── docker-compose.yml # Orquestación Docker
-├── .env.example # Variables de entorno ejemplo
-├── .gitignore # Archivos ignorados por Git
-└── README.md # Este archivo
+├── src/                        # Código fuente principal
+│   ├── api/                    # Capa de presentación (endpoints)
+│   │   ├── endpoints/
+│   │   │   ├── messages.py     # Endpoints de mensajes
+│   │   │   └── health.py       # Endpoints de monitoreo (health check)
+│   │   └── __init__.py
+│   │
+│   ├── core/                   # Configuración y utilidades
+│   │   ├── config.py           # Configuración de la aplicación
+│   │   └── __init__.py
+│   │
+│   ├── database/               # Capa de datos
+│   │   ├── database.py         # Configuración de la DB y sesiones
+│   │   ├── models.py           # Modelos ORM (SQLAlchemy)
+│   │   └── __init__.py
+│   │
+│   ├── domain/                 # Modelos de dominio
+│   │   ├── schemas.py          # Esquemas Pydantic (DTOs)
+│   │   └── __init__.py
+│   │
+│   ├── repositories/           # Patrón repositorio
+│   │   ├── message_repository.py # Operaciones CRUD de mensajes
+│   │   └── __init__.py
+│   │
+│   ├── services/               # Lógica de negocio
+│   │   ├── message_service.py  # Servicio principal de mensajes
+│   │   ├── validation_service.py # Validación de mensajes
+│   │   ├── processing_pipeline.py # Procesamiento de contenido
+│   │   └── __init__.py
+│   │
+│   └── main.py                 # Aplicación principal FastAPI
+│
+├── tests/                      # Pruebas unitarias e integración
+│   ├── test_api.py             # Pruebas de endpoints
+│   ├── test_services.py        # Pruebas de servicios
+│   └── __init__.py
+│
+├── requirements.txt            # Dependencias del proyecto
+├── Dockerfile                  # Configuración de Docker
+├── docker-compose.yml          # Orquestación de contenedores
+├── .env.example                # Ejemplo de variables de entorno
+├── .gitignore                  # Archivos ignorados por Git
+└── README.md                   # Documentación del proyecto
+
 
 ##  Instalación y Configuración
 
