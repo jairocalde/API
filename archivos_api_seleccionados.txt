@@ -1,0 +1,223 @@
+﻿========================================
+Archivo: src/main.py
+========================================
+from fastapi import FastAPI
+from src.api.endpoints import messages, health
+from src.database.database import engine, Base
+from src.database import models
+
+app = FastAPI(title="API PARA NEQUI", debug=True)
+
+# Crear tablas
+Base.metadata.create_all(bind=engine)
+
+# Rutas
+app.include_router(messages.router)
+app.include_router(health.router)
+
+========================================
+Archivo: src/api/endpoints/messages.py
+========================================
+from fastapi import APIRouter, HTTPException, status
+from src.domain.schemas import MessageSchema
+from src.services.message_service import MessageService
+from src.repositories.message_repository import MessageRepository
+from src.database.database import SessionLocal
+
+router = APIRouter()
+
+# Crear sesiÃ³n de base de datos
+db = SessionLocal()
+
+# Inyectar dependencias
+repository = MessageRepository(db)
+service = MessageService(repository)
+
+@router.post("/api/messages", status_code=status.HTTP_201_CREATED)
+def create_message(message: MessageSchema):
+    try:
+        data = service.process_message(message)
+        return {
+            "status": "success",
+            "data": data
+        }
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "status": "error",
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": str(e)
+                }
+            }
+        )
+    except Exception as e:
+        print("ERROR REAL DEL SERVIDOR ðŸ‘‰", e)
+        raise
+
+
+========================================
+Archivo: src/services/message_service.py
+========================================
+from src.services.validation_service import ValidationService
+from src.services.processing_pipeline import process_message_content
+from datetime import datetime
+from fastapi import HTTPException
+
+
+class MessageService:
+
+    def __init__(self, repository):
+        self.repository = repository
+        self.validator = ValidationService()
+
+    def process_message(self, message):
+        # Validaciones
+        is_valid, error = self.validator.validate_message_format(message.dict())
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=error)
+
+        is_valid, error = self.validator.validate_content(message.content)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=error)
+
+        is_valid, error = self.validator.validate_timestamp(message.timestamp)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=error)
+
+        metadata = process_message_content(message.content)
+
+        data = {
+            "message_id": message.message_id,
+            "session_id": message.session_id,
+            "content": message.content,
+            "timestamp": message.timestamp,  # ðŸ‘ˆ datetime, NO string
+            "sender": message.sender,
+            "message_metadata": metadata
+        }
+
+        try:
+            self.repository.save_message(data)
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str(e))
+
+        return data
+
+========================================
+Archivo: src/repositories/message_repository.py
+========================================
+from sqlalchemy.exc import IntegrityError
+from src.database.models import MessageModel
+
+
+class MessageRepository:
+
+    def __init__(self, db):
+        self.db = db
+
+    def save_message(self, data: dict):
+        try:
+            message = MessageModel(**data)
+            self.db.add(message)
+            self.db.commit()
+            self.db.refresh(message)
+            return message
+
+        except IntegrityError:
+            self.db.rollback()
+            raise ValueError("El message_id ya existe")
+
+        except Exception:
+            self.db.rollback()
+            raise
+
+========================================
+Archivo: src/database/database.py
+========================================
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+
+DATABASE_URL = "sqlite:///./messages.db"
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+========================================
+Archivo: src/database/models.py
+========================================
+from sqlalchemy import Column, String, DateTime, JSON
+from src.database.database import Base
+
+class MessageModel(Base):
+    __tablename__ = "messages"
+
+    message_id = Column(String, primary_key=True, index=True)
+    session_id = Column(String, index=True)
+    content = Column(String)
+    timestamp = Column(DateTime)
+    sender = Column(String)
+    message_metadata = Column(JSON)
+
+========================================
+Archivo: src/services/validation_service.py
+========================================
+from datetime import datetime
+
+class ValidationService:
+
+    def validate_message_format(self, message: dict):
+        required_fields = ["message_id", "session_id", "content", "timestamp", "sender"]
+
+        for field in required_fields:
+            if field not in message:
+                return False, f"Falta el campo requerido: {field}"
+
+        return True, None
+
+    def validate_content(self, content: str):
+        if not content or not isinstance(content, str):
+            return False, "El contenido del mensaje es invÃ¡lido"
+
+        return True, None
+
+    def validate_timestamp(self, timestamp):
+        if isinstance(timestamp, datetime):
+            return True, None
+
+        try:
+            datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+            return True, None
+        except Exception:
+            return False, "Formato de timestamp invÃ¡lido. Use ISO 8601 (ej: 2023-06-15T14:30:00Z)"
+
+========================================
+Archivo: src/services/processing_pipeline.py
+========================================
+# src/services/processing_pipeline.py
+from datetime import datetime
+
+def process_message_content(content: str) -> dict:
+    return {
+        "word_count": len(content.split()),
+        "character_count": len(content),
+        "processed_at": datetime.utcnow().isoformat() + "Z"
+    }
+

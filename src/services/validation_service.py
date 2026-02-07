@@ -1,42 +1,27 @@
-# src/services/validation_service.py
-import re
-from typing import Tuple, Optional
-from datetime import datetime
+from datetime import datetime # Importa datetime para validación de fechas
 
-class ValidationService:
-    INAPPROPRIATE_WORDS = ["malapalabra", "inapropiado", "ofensivo", "prohibido"]
+class ValidationService: # Valida que el mensaje tenga todos los campos requeridos
 
-    def validate_message_format(self, message_data: dict) -> Tuple[bool, Optional[str]]:
+    def validate_message_format(self, message: dict):
         required_fields = ["message_id", "session_id", "content", "timestamp", "sender"]
 
-        for field in required_fields:
-            if field not in message_data or not message_data[field]:
-                return False, f"Campo requerido faltante: '{field}'"
+        for field in required_fields: # Revisa cada campo requerido
+            if field not in message:
+                return False, f"Falta el campo requerido: {field}" 
 
-        if message_data["sender"] not in ["user", "system"]:
-            return False, "El campo 'sender' debe ser 'user' o 'system'"
+        return True, None # Si todos los campos están presentes
 
-        if not re.match(r'^[a-zA-Z0-9\-_]+$', message_data["message_id"]):
-            return False, "message_id solo puede contener letras, números, guiones y guiones bajos"
-
-        return True, None
-
-    def validate_content(self, content: str) -> Tuple[bool, Optional[str]]:
-        if not content or not content.strip():
-            return False, "El contenido no puede estar vacío"
-
-        if len(content.strip()) > 1000:
-            return False, "El contenido no puede exceder 1000 caracteres"
-
-        content_lower = content.lower()
-        for word in self.INAPPROPRIATE_WORDS:
-            if word in content_lower:
-                return False, "El contenido contiene palabras inapropiadas"
+    def validate_content(self, content: str):  # Valida que el contenido sea un string no vacío
+        if not content or not isinstance(content, str): # Verifica que content no sea None/empty y sea string
+            return False, "El contenido del mensaje es inválido"
 
         return True, None
 
-    def validate_timestamp(self, timestamp: datetime) -> Tuple[bool, Optional[str]]:
-        now = datetime.now(timestamp.tzinfo)
-        if timestamp > now:
-            return False, "El timestamp no puede ser una fecha futura"
-        return True, None
+    def validate_timestamp(self, timestamp): # Valida el formato del timestamp
+        if isinstance(timestamp, datetime): # Si ya es un objeto datetime, es válido
+            return True, None
+        try: # Si es string, intenta parsear como ISO 860
+            datetime.fromisoformat(timestamp.replace("Z", "+00:00")) # Reemplaza "Z" (Zulu/UTC) por "+00:00" para compatibilidad
+            return True, None
+        except Exception:
+            return False, "Formato de timestamp inválido. Use ISO 8601 (ej: 2023-06-15T14:30:00Z)"

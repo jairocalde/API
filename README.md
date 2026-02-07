@@ -53,7 +53,7 @@ Recibe un mensaje de chat, valida su estructura, procesa su contenido y lo almac
 
 Ejemplo de request:
 {
-  "message_id": "msg-123456",
+  "message_id": "msg-123456",  ## Se debe de variar el id del mensaje
   "session_id": "session-abcdef",
   "content": "Hola, ¿cómo puedo ayudarte hoy?",
   "timestamp": "2023-06-15T14:30:00Z",
